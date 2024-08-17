@@ -2,23 +2,18 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 
-import '../../../feature_two/data/repos/feature_two_repo_impl.dart';
+import '../../../events/feature_one_data_changed_event.dart';
+import '../../../events_handler.dart';
 import '../../data/repos/feature_one_repo_impl.dart';
 
 part 'feature_one_state.dart';
 
-class FeatureOneDataChangedEvent {
-  final List<String> data;
-  FeatureOneDataChangedEvent(this.data);
-}
-
-class FeatureOneCubit extends Cubit<FeatureOneState> {
+class FeatureOneCubit extends Cubit<FeatureOneState> with EventBusMixin {
   final FeatureOneRepo _repo;
-  final FeatureTwoRepo _sharedRepo;
   late final StreamSubscription _subscription;
 
-  FeatureOneCubit(this._repo, this._sharedRepo) : super(FeatureOneInitial()) {
-    _listenToFeatureTwoDataUsingReactiveRepo();
+  FeatureOneCubit(this._repo) : super(FeatureOneInitial()) {
+    _listenToFeatureTwoDataUsingEventBus();
   }
 
   void getFeatureOneData() async {
@@ -31,9 +26,9 @@ class FeatureOneCubit extends Cubit<FeatureOneState> {
     }
   }
 
-  void _listenToFeatureTwoDataUsingReactiveRepo() {
-    _subscription = _sharedRepo.broadcastFeatureOneData.listen((data) {
-      emit(FeatureOneLoaded(data));
+  void _listenToFeatureTwoDataUsingEventBus() {
+    _subscription = listenEvent<FeatureOneDataChangedEvent>((event) {
+      emit(FeatureOneLoaded(event.data));
     }, onError: (error) {
       emit(FeatureOneError(error.toString()));
     });

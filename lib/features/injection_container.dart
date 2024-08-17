@@ -1,3 +1,4 @@
+import 'package:event_bus/event_bus.dart';
 import 'package:get_it/get_it.dart' as sl;
 
 import '/features/feature_one/data/data_sources/feature_one_local_data_source.dart';
@@ -10,6 +11,9 @@ import 'feature_two/presentation/cubit/feature_two_cubit.dart';
 final mainSL = sl.GetIt.instance;
 
 void init() {
+  //Register Event Bus
+  mainSL.registerLazySingleton<EventBus>(() => EventBus());
+
   // Register LocalDataSource
   mainSL.registerLazySingleton<FeatureOneLocalDataSource>(
       () => FeatureOneLocalDataSourceImpl());
@@ -25,7 +29,7 @@ void init() {
       () => FeatureTwoRepoImpl(mainSL()));
 
   // Register Cubits
-  mainSL.registerFactory(() => FeatureOneCubit(mainSL(), mainSL()));
+  mainSL.registerFactory(() => FeatureOneCubit(mainSL()));
 
   mainSL.registerFactory(() => FeatureTwoCubit(mainSL()));
 }
