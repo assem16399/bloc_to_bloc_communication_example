@@ -7,11 +7,6 @@ import '../../data/repos/feature_one_repo_impl.dart';
 
 part 'feature_one_state.dart';
 
-class FeatureOneDataChangedEvent {
-  final List<String> data;
-  FeatureOneDataChangedEvent(this.data);
-}
-
 class FeatureOneCubit extends Cubit<FeatureOneState> {
   final FeatureOneRepo _repo;
   final FeatureTwoRepo _sharedRepo;
